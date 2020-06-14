@@ -1,0 +1,126 @@
+<!doctype html>
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>填写信息</title>
+    <meta name="description" content="这是一个 index 页面">
+    <meta name="keywords" content="index">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" th:href="@{/static/i/favicon.png}">
+    <link rel="apple-touch-icon-precomposed" th:href="@{/static/i/1265585456.png}">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/admin.css}">
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+
+<!--头部-->
+<header th:replace="header::header">
+</header>
+<!-- sidebar start -->
+<div th:replace="sidebar:: sidebar"></div>
+<!--主体-->
+<!-- content start -->
+<div class="admin-content" id="report">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">填写上报信息</strong> / <small>FILL OUT
+            information</small></div>
+    </div>
+
+    <hr/>
+
+    <div class="am-g">
+
+        <div class="am-u-sm-12 am-u-md-4 am-u-md-push-8">
+
+        </div>
+
+        <div class="am-u-sm-12 am-u-md-8 am-u-md-pull-4">
+            <div class="am-panel am-panel-default admin-sidebar-panel" style="text-align: center;">
+                <h2 style="color:#17a2b8;" th:text="${info.title}"></h2>
+                <form class="am-form am-form-horizontal" th:utext="${info.templateContent}" id="info-success">
+
+                </form>
+                <button class="am-btn  am-btn-success am-btn-xm" @click="submit()">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--尾部-->
+<footer th:replace="footer:: footer">
+
+</footer>
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script th:src="@{/static/js/polyfill/rem.min.js}"></script>
+<script th:src="@{/static/js/polyfill/respond.min.js}"></script>
+<script th:src="@{/static/js/amazeui.legacy.js}"></script>
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+<script th:src="@{/static/js/app.js}"></script>
+<script th:src="@{/static/js/axios.min.js}"></script>
+<script th:src="@{/static/js/vue.min.js}"></script>
+
+
+<script th:inline="javascript">
+
+    Vue.config.devtools = true;
+    var vm = new Vue({
+        el: "#report",
+        data: {
+            info: {
+                title: "",
+                templateContent: "",
+                result: ""
+            },
+            result: {
+                id: "",
+                res: "",
+                flag:""
+            },
+            jsonList: [],
+            resultValues: []
+        },
+        created() {
+            this.jsonList = JSON.parse([[${info.data}]]);
+        },
+        methods: {
+            submit() {
+                //获取模版标题
+                this.info.title = [[${info.title}]];
+                this.info.templateContent = [[${info.templateContent}]];
+                //模版内容
+                for (let i = 0; i < this.jsonList.length; i++) {
+                        let id = this.jsonList[i].id;
+                        let val = $("#" + id).val();
+                        this.result.id = id;
+                        this.result.res = val;
+                    this.resultValues = localStorage.getItem("result") !== null ? JSON.parse(localStorage.getItem("result")) : [];
+                    this.resultValues.push(this.result);
+                    localStorage.setItem("result", JSON.stringify(this.resultValues));
+                }
+                this.info.result = JSON.stringify(this.resultValues);
+                localStorage.removeItem("result");
+                axios.post("/success/successInfo", this.info).then(resp => {
+                    window.location.href = "/report";
+                });
+
+            }
+
+        }
+
+
+    });
+
+</script>
+
+</body>
+</html>

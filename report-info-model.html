@@ -1,0 +1,332 @@
+<!doctype html>
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>上报信息模版设置</title>
+    <meta name="description" content="这是一个 index 页面">
+    <meta name="keywords" content="index">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" th:href="@{/static/i/favicon.png}">
+    <link rel="apple-touch-icon-precomposed" th:href="@{/static/i/1265585456.png}">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+
+<!--头部-->
+<header th:replace="header::header">
+</header>
+<!-- sidebar start -->
+<div th:replace="sidebar:: sidebar"></div>
+<!--主体-->
+<div id="report">
+    <div class="modal fade" id="textmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">提示信息</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body" v-if="flag===1">
+                    <form>
+                        <div class="form-group">
+                            <label class="col-form-label">请输入问题信息:</label>
+                            <input type="text" class="form-control" v-model.lazy="jsonData.str">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">请输入id:</label>
+                            <input type="text" class="form-control" v-model.lazy="jsonData.id">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-body" v-if="flag===4">
+                    <form>
+                        <div class="form-group">
+                            <label class="col-form-label">请输入模版标题:</label>
+                            <input type="text" class="form-control" v-model="template.title">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" v-if="flag===1" class="btn btn-primary" @click="addText()">确定</button>
+                    <button type="button" v-if="flag===2" class="btn btn-primary" @click="addRadio()">确定</button>
+                    <button type="button" v-if="flag===3" class="btn btn-primary" @click="addTextField()">确定</button>
+                    <button type="button" v-if="flag===4" class="btn btn-primary" @click="submit()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">上报信息模版设置</strong> / <small>Personal
+                information</small></div>
+        </div>
+
+        <hr/>
+        <div class="am-g">
+
+            <div class="am-u-sm-12 am-u-md-4 am-u-md-push-8">
+
+            </div>
+
+            <div class="am-u-sm-12 am-u-md-8 am-u-md-pull-4">
+                <div class="am-margin">
+                    <button type="button" class="am-btn am-btn-primary am-btn-xs" data-toggle="modal"
+                            data-target="#textmodel" @click="flag=1">添加文本框
+                    </button>
+                    <button type="button" class="am-btn am-btn-primary am-btn-xs" @click="clear()">清空模版
+                    </button>
+
+                </div>
+                <div class="am-margin" style="text-align: center">
+                    <form class="am-form am-form-horizontal" v-html="html_input2">
+
+
+                    </form>
+                    <button type="button" class="am-btn am-btn-primary am-btn-xs"
+                            data-target="#textmodel"
+                            data-toggle="modal" @click="flag=4">提交模版
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="am-g">
+            <button type="button" class="am-btn am-btn-warning am-btn-xs" v-if="!history_model"
+                    @click="history_model=true">查看历史模版
+            </button>
+            <button type="button" class="am-btn am-btn-warning am-btn-xs" v-else="history_model"
+                    @click="history_model=false">关闭模版视图
+            </button>
+            <div class="am-u-sm-12">
+                <form class="am-form" v-show="history_model">
+                    <table class="am-table am-table-striped am-table-hover table-main" style="text-align: center;">
+                        <thead>
+                        <tr>
+                            <th class="table-id">id</th>
+                            <th class="table-title">模版名称</th>
+                            <th class="table-author">创建时间</th>
+                            <th class="table-author">状态</th>
+                            <th class="table-set">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for=" template in templates">
+                            <td v-text="template.id"></td>
+                            <td v-text="template.title"></td>
+                            <td v-text="template.createTime"></td>
+                            <td v-if="template.state===1" style="color: #4db14d">使用中</td>
+                            <td v-if="template.state===0" style="color: red">未使用</td>
+                            <td>
+                                <button class="am-btn am-btn-default am-btn-xs am-text-secondary"
+                                        @click.prevent="detail(template.id)"><span
+                                        class="am-icon-pencil-square-o"></span> 详情
+                                </button>
+                                <button class="am-btn am-btn-default am-btn-xs  am-text-success"
+                                        @click.prevemt="useTemplate(template.id,true)" v-if="template.state===0"><span
+                                        class="am-icon-hdd-o"></span> 使用
+                                </button>
+                                <button class="am-btn am-btn-default am-btn-xs  am-text-success"
+                                        @click.prevemt="useTemplate(template.id,false)" v-if="template.state===1"><span
+                                        class="am-icon-hdd-o"></span> 不使用
+                                </button>
+                                <button class="am-btn am-btn-default am-btn-xs am-text-danger"
+                                        @click.prevent="deleteTemplate(template.id)"><span
+                                        class="am-icon-trash-o"></span> 删除
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="am-cf">
+                        共 {{total}}条记录
+                        <div class="am-fr">
+                            <ul class="am-pagination">
+                                <li> <a href="#" @click.prevent="filter.page=1">首页</a></li>
+                                <li ><a href="#" @click.prevent="prePage()">«</a></li>
+                                <li v-for="i in Math.min(5,totalPage)">
+                                    <a href="#" v-if="filter.page===index(i)" style="background-color: #3bb4f2" v-text="index(i)">1</a>
+                                    <a href="#" v-else @click.prevent="filter.page=index(i)" v-text="index(i)">1</a>
+                                </li>
+                                <li><a href="#" v-show="filter.page+2<totalPage&&totalPage>5">......</a></li>
+                                <li><a href="#" @click.prevent="nextPage()">»</a></li>
+                                <li> <a href="#" @click.prevent="filter.page=totalPage">尾页</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr/>
+                    <p>注：-------------</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--尾部-->
+<footer th:replace="footer:: footer">
+</footer>
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script th:src="@{/static/js/polyfill/rem.min.js}"></script>
+<script th:src="@{/static/js/polyfill/respond.min.js}"></script>
+<script th:src="@{/static/js/amazeui.legacy.js}"></script>
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+<script th:src="@{/static/js/app.js}"></script>
+<script th:src="@{/static/js/axios.min.js}"></script>
+<script th:src="@{/static/js/vue.min.js}"></script>
+<script th:src="@{/static/js/bootstrap.min.js}"></script>
+
+
+<script type="text/javascript">
+    Vue.config.devtools = true;
+    var vm = new Vue({
+        el: "#report",
+        data:{
+            jsonData: {
+                str: "",
+                id: "",
+            },
+            filter:{
+                page:1,
+                size:6,
+            },
+            totalPage:"",
+            total:"",
+            flag: 1,
+            history_model: true,
+            templates: [],
+            template: {
+                templateContent: "",
+                title: "",
+                data: ""
+            },
+            useFlag: false,
+            jsonList: [],
+            html_input: "",
+            html_input2: ""
+        },
+        created() {
+                this.loadData();
+        },
+        methods: {
+            loadData(){
+                if (localStorage.getItem("jsonList") !== null) {
+                    this.jsonList = JSON.parse(localStorage.getItem("jsonList"));
+                }
+                this.html_input2 = localStorage.getItem("html");
+                //发送ajax请求查询历史模版
+                axios.get("/info_template/list?page="+this.filter.page+"&size="+this.filter.size).then(resp => {
+                    this.templates = resp.data.list;
+                    this.totalPage=resp.data.totalPage;
+                    this.total=resp.data.total;
+                }).catch(err => {
+                    alert("当前没有历史模版信息");
+                });
+            },
+
+            addText() {  //添加文本框
+                this.jsonList=localStorage.getItem("jsonList")!==null?JSON.parse(localStorage.getItem("jsonList")):[];
+                this.jsonList.push(this.jsonData);
+                localStorage.setItem("jsonList", JSON.stringify(this.jsonList));
+                this.html_input = "<div class='am-form-group' >" +
+                    "<label class='am-u-sm-3 am-form-label'>" + this.jsonData.str + ":</label>" +
+                    "<div class='am-u-sm-9'  style='text-align: center'>" +
+                    "<input type='text' id='" + this.jsonData.id + "' class='am-input-sm'></div></div>";
+                if (this.html_input2 !== null) {
+                    this.html_input2 = this.html_input2 + this.html_input;
+                } else {
+                    this.html_input2 = this.html_input;
+                }
+                this.template.templateContent = this.html_input2;
+                localStorage.setItem("html", this.template.templateContent);
+                $("#textmodel").modal('hide');
+            },
+            submit() { //保存
+                if (this.html_input2 === null || this.html_input2 === "") {
+                    alert("当前模版内容为空");
+                    return;
+                }
+                this.template.templateContent = this.html_input2;
+                this.template.data = JSON.stringify(this.jsonList);
+                //发送ajax请求 保存模版
+                axios.post("/info_template/saveTemplate", this.template).then(resp => {
+                    location.reload();
+                });
+                //保存模版详情
+                this.clear();
+            },
+            clear() { //清空localStorage
+                localStorage.clear();
+                location.reload();
+            },
+            detail(template_id) { //查询模版详情
+                location.href = '/info_template/findById/' + template_id + '';
+            },
+            deleteTemplate(template_id) { //删除模版
+                axios.delete("/info_template/deleteTemplate/" + template_id + "").then(resp => {
+                    window.location.reload(); //刷新页面
+                });
+            },
+            useTemplate(template_id, flag) {
+                axios.put("/info_template/useTemplate?id=" + template_id + "&flag=" + flag);
+               window.location.reload();
+            },
+            //下一页
+            nextPage(){
+                if(this.filter.page<this.totalPage){
+                    this.filter.page++;
+                }
+            },
+            //上一页
+            prePage(){
+                if(this.filter.page>1){
+                    this.filter.page--;
+                }
+            },
+            //页码处理
+            index(i){
+                if(this.filter.page<=3||this.totalPage<5)
+                {
+                    return i;
+                }
+                else if(this.filter.page>=this.totalPage-2)
+                {
+                    return i+this.totalPage-5;
+                }
+                else{
+                    return i+this.filter.page-3;
+                }
+
+            },
+        },
+        watch:{
+            filter: {
+                deep:true,
+                handler(){
+                    this.loadData();
+                }
+            }
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

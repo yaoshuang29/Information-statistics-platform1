@@ -1,0 +1,114 @@
+<!doctype html>
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>个人资料</title>
+    <meta name="description" content="这是一个 index 页面">
+    <meta name="keywords" content="index">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" th:href="@{/static/i/favicon.png}">
+    <link rel="apple-touch-icon-precomposed" th:href="@{/static/i/1265585456.png}">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/admin.css}">
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+
+<!--头部-->
+<header  th:replace="header::header">
+</header>
+<!-- sidebar start -->
+<div th:replace="sidebar:: sidebar"></div>
+<!--主体-->
+<!-- content start -->
+<div class="admin-content">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">个人资料</strong> / <small>Personal information</small></div>
+    </div>
+
+    <hr/>
+
+    <div class="am-g">
+
+        <div class="am-u-sm-12 am-u-md-4 am-u-md-push-8">
+
+        </div>
+
+        <div class="am-u-sm-12 am-u-md-8 am-u-md-pull-4">
+            <form class="am-form am-form-horizontal" action="/user/updateUser" method="post">
+                <input type="hidden" name="id" th:value="${user.id}">
+                <div class="am-form-group">
+                    <label for="user-name" class="am-u-sm-3 am-form-label">姓名 / Name</label>
+                    <div class="am-u-sm-9">
+                        <input type="text" id="user-name" name="username" th:value="${user.username}" disabled>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label for="user-phone"  class="am-u-sm-3 am-form-label">性别</label>
+                    <div class="am-u-sm-9">
+                        <input type="text" th:if="${user.gender}==1" name="gender" value="男" disabled>
+                        <input type="text" th:if="${user.gender}==0" name="gender" value="女" disabled>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <label for="user-phone"  class="am-u-sm-3 am-form-label">电话 / Telephone</label>
+                    <div class="am-u-sm-9">
+                        <input type="text" id="user-phone" name="phone" th:value="${user.phone}" disabled >
+                    </div>
+                </div>
+
+                <div class="am-form-group">
+                    <label  class="am-u-sm-3 am-form-label">身份证号</label>
+                    <div class="am-u-sm-9">
+                        <input type="text" name="cardId"  th:value="${user.cardId}" disabled>
+                    </div>
+                </div>
+
+                <div class="am-form-group">
+                    <label  class="am-u-sm-3 am-form-label">注册时间</label>
+                    <div class="am-u-sm-9">
+                        <input type="text" name="createTime" th:value="${user.createTime}" disabled>
+                    </div>
+                </div>
+                <div class="am-form-group">
+                    <div class="am-u-sm-9 am-u-sm-push-3">
+                        <button type="button" onclick="updateUser()" class="am-btn am-btn-primary">修改资料</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--尾部-->
+<footer th:replace="footer:: footer">
+
+</footer>
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script th:src="@{/static/js/polyfill/rem.min.js}"></script>
+<script th:src="@{/static/js/polyfill/respond.min.js}"></script>
+<script th:src="@{/static/js/amazeui.legacy.js}"></script>
+
+
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+<script th:src="@{/static/js/app.js}"></script>
+
+<script type="text/javascript">
+    function updateUser() {
+        window.location.href="/user/showUser";
+    }
+
+
+</script>
+
+</body>
+</html>

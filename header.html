@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--头部-->
+<header class="am-topbar admin-header" th:fragment="header" id="header">
+    <div class="am-topbar-brand">
+        <strong>Amaze</strong> <small>平顶山学院信息统计平台</small>
+    </div>
+
+    <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only"
+            data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span
+            class="am-icon-bars"></span></button>
+
+    <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
+
+        <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
+            <li class="am-dropdown" data-am-dropdown>
+                <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;" sec:authorize="isAuthenticated()">
+                    <span class="am-icon-users"></span>
+                    <span th:if="${session.roleName}=='STUDENT'" style="color: #3bb4f2">学生</span>
+                    <span th:if="${session.roleName}=='TEACHER'" style="color: #3bb4f2">辅导员</span>
+                    <span th:if="${session.roleName}=='ADMIN'" style="color: #3bb4f2">管理员</span>
+                    <span th:text="${session.username}"></span>
+                    <span class="am-icon-caret-down"></span>
+                </a>
+                <ul class="am-dropdown-content">
+                    <li><a href="/user/userInfo"><span class="am-icon-user"></span> 资料</a></li>
+                    <li><a href="/logout"><span class="am-icon-power-off"></span>退出</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</header>
+</body>
+</html>

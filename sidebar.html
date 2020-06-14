@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body >
+<!-- sidebar start -->
+<div class="admin-sidebar" th:fragment="sidebar">
+    <ul class="am-list admin-sidebar-list">
+        <li><a href="/index"><span class="am-icon-home"></span> 首页</a></li>
+        <li class="admin-parent" th:if="${session.roleName}=='TEACHER'">
+            <a class="am-cf" data-am-collapse="{target: '#collapse-nav'}"><span class="am-icon-file"></span> 辅导员
+                <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+            <ul class="am-list am-collapse admin-sidebar-sub am-in" id="collapse-nav">
+                <li><a href="/releaseInfo"><span class="am-icon-puzzle-piece" ></span> 发布信息</a></li>
+                <li ><a href="/infoStatistical"><span class="am-icon-bug"></span> 上报信息统计</a></li>
+            </ul>
+        </li>
+        <li class="admin-parent" th:if="${session.roleName}=='STUDENT'">
+            <a class="am-cf" data-am-collapse="{target: '#collapse-nav2'}"><span class="am-icon-file"></span> 学生
+                <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+            <ul class="am-list am-collapse admin-sidebar-sub am-in" id="collapse-nav2">
+                <li><a href="/report"><span class="am-icon-puzzle-piece"></span> 上报信息</a></li>
+            </ul>
+        </li>
+        <li class="admin-parent" th:if="${session.roleName}=='ADMIN'">
+            <a class="am-cf" data-am-collapse="{target: '#collapse-nav3'}"><span class="am-icon-file"></span> 管理员
+                <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+            <ul class="am-list am-collapse admin-sidebar-sub am-in" id="collapse-nav3">
+                <li><a href="/studentsManage"><span class="am-icon-calendar"></span> 学生信息管理</a></li>
+                <li><a href="/teacherManage" class="am-cf"><span class="am-icon-check"></span> 辅导员信息管理</a></li>
+                <li><a href="/infoStatisticalAdmin"><span class="am-icon-th"></span>上报信息统计</a></li>
+                <li><a href="/reportInfo"><span class="am-icon-bug"></span> 上报信息模版</a></li>
+            </ul>
+        </li>
+        <li><a href="/logout"><span class="am-icon-sign-out"></span> 退出登录</a></li>
+    </ul>
+
+    <div class="am-panel am-panel-default admin-sidebar-panel">
+        <div class="am-panel-bd">
+            <p><span class="am-icon-bookmark"></span> 公告</p>
+            <p>时光静好，与君语；细水流年，与君同。—— Amaze</p>
+        </div>
+    </div>
+
+    <div class="am-panel am-panel-default admin-sidebar-panel">
+        <div class="am-panel-bd">
+            <p><span class="am-icon-tag"></span> wiki</p>
+            <p>Welcome to the Amaze wiki!</p>
+        </div>
+    </div>
+</div>
+<!-- sidebar end -->
+
+</body>
+</html>

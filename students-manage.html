@@ -1,0 +1,205 @@
+<!doctype html>
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>学生信息管理</title>
+    <meta name="description" content="这是一个 index 页面">
+    <meta name="keywordwords" content="index">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" th:href="@{/static/i/favicon.png}">
+    <link rel="apple-touch-icon-precomposed" th:href="@{/static/i/1265585456.png}">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" th:href="@{/static/css/amazeui.min.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/admin.css}">
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+
+<!--头部-->
+<header  th:replace="header::header">
+</header>
+<!-- sidebar start -->
+<div th:replace="sidebar:: sidebar"></div>
+<!--主体-->
+<div class="admin-content" id="student">
+
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">学生信息</strong> / <small>Table</small></div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-md-3 am-cf">
+            <div class="am-fr">
+                <div class="am-input-group am-input-group-sm">
+                    <input type="text" v-model="filter.keyword" placeholder="请输入用户名" class="am-form-field" style="border-top: 0px;border-left: 0px;border-right: 0px">
+                    <span class="am-input-group-btn">
+                  <button class="am-btn am-btn-default" type="button" disabled>搜索</button>
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-sm-12">
+            <form class="am-form">
+                <table class="am-table am-table-striped am-table-hover table-main">
+                    <thead>
+                    <tr>
+                        <th class="table-id">学号</th>
+                        <th class="table-title">姓名</th>
+                        <th class="table-type">班级</th>
+                        <th class="table-author">电话</th>
+                        <th class="table-date">身份证号</th>
+                        <th class="table-date">用户状态</th>
+                        <th class="table-set">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="student in students">
+                        <td v-text="student.id"></td>
+                        <td v-text="student.username"><a href="#">Business management</a></td>
+                        <td v-text="student.classes.className">default</td>
+                        <td v-text="student.phone">测试1号</td>
+                        <td v-text="student.cardId">2014年9月4日 7:28:47</td>
+                        <td v-if="student.state===0" style="color: red">已关闭</td>
+                        <td v-if="student.state===1" style="color:#4bad4b;">使用中</td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button class="am-btn am-btn-default am-btn-xs" v-if="student.state===0" @click="stateSwitch(true,student.id)"><span class="am-icon-copy"></span>开启</button>
+                                    <button class="am-btn am-btn-default am-btn-xs" v-if="student.state===1" @click="stateSwitch(false,student.id)"><span class="am-icon-copy"></span>关闭</button>
+                                    <button class="am-btn am-btn-default am-btn-xs am-text-danger" @click="deleteStudent(student.id)"><span class="am-icon-trash-o" ></span> 删除</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="am-cf">
+                    共 {{total}}条记录
+                    <div class="am-fr">
+                        <ul class="am-pagination">
+                            <li> <a href="#" @click.prevent="filter.page=1">首页</a></li>
+                            <li ><a href="#" @click.prevent="prePage()">«</a></li>
+                            <li v-for="i in Math.min(5,totalPage)">
+                                <a href="#" v-if="filter.page===index(i)" style="background-color: #3bb4f2" v-text="index(i)">1</a>
+                                <a href="#" v-else @click.prevent="filter.page=index(i)" v-text="index(i)">1</a>
+                            </li>
+                            <li><a href="#" v-show="filter.page+2<totalPage&&totalPage>5">......</a></li>
+                            <li><a href="#" @click.prevent="nextPage()">»</a></li>
+                            <li> <a href="#" @click.prevent="filter.page=totalPage">尾页</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr />
+                <p>注：.....</p>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!--尾部-->
+<footer th:replace="footer:: footer">
+
+</footer>
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script th:src="@{/static/js/polyfill/rem.min.js}"></script>
+<script th:src="@{/static/js/polyfill/respond.min.js}"></script>
+<script th:src="@{/static/js/amazeui.legacy.js}"></script>
+<script th:src="@{/static/js/amazeui.min.js}"></script>
+<script th:src="@{/static/js/app.js}"></script>
+<script th:src="@{/static/js/vue.min.js}"></script>
+<script th:src="@{/static/js/axios.min.js}"></script>
+
+<script type="text/javascript">
+    Vue.config.devtools=true;
+    var vm=new Vue({
+        el:"#student",
+        data:{
+            students:[],
+            filter:{
+                page:1,
+                size:10,
+                keyword:""
+            },
+            total:"",
+            totalPage:"",
+
+        },
+        created(){
+           this.loadData();
+        },
+        methods:{
+            loadData(){
+                axios.get("/student/list?page="+this.filter.page+"&size="+this.filter.size+"&keyword="+this.filter.keyword)
+                    .then(resp=>{
+                        this.students=resp.data.list;
+                        this.total=resp.data.total;
+                        this.totalPage=resp.data.totalPage;
+                    });
+            },
+            //下一页
+            nextPage(){
+                if(this.filter.page<this.totalPage){
+                    this.filter.page++;
+                }
+            },
+            //上一页
+            prePage(){
+                if(this.filter.page>1){
+                    this.filter.page--;
+                }
+            },
+            //页码处理
+            index(i){
+                if(this.filter.page<=3||this.totalPage<5)
+                {
+                    return i;
+                }
+                else if(this.filter.page>=this.totalPage-2)
+                {
+                    return i+this.totalPage-5;
+                }
+                else{
+                    return i+this.filter.page-3;
+                }
+
+            },
+            //切换用户状态
+            stateSwitch(flag,uid){
+                axios.put("/student/switch/"+flag+"/"+uid+"").then(resp=>{
+                   location.reload();
+                });
+            },
+            //删除 用户
+            deleteStudent(uid){
+                axios.delete("/student/"+uid+"").then(resp=>{
+                   location.reload();
+                });
+            },
+        },
+        watch:{
+            filter: {
+                deep:true,
+                handler(){
+                    this.loadData();
+                }
+            }
+
+        }
+
+    });
+
+</script>
+</body>
+</html>

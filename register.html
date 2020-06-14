@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>注册</title>
+
+    <link th:href="@{/static/css/main.css}" rel="stylesheet" type="text/css"/>
+    <link rel="icon" type="image/png" th:href="@{/static/i/favicon.png}">
+</head>
+<body>
+<div id="register">
+
+    <div class="login">
+        <div class="box1 png">
+            <div class="logo png"></div>
+            <div class="input">
+                <div class="log" style="width: 25%">
+                    <label><a href="/login">返回登录</a></label>
+
+                    <div class="name">
+                        <label>身份选择</label>学生<input type="radio" value="1" name="role" v-model.lazy="userInfo.roleFlag">
+                        辅导员<input type="radio" value="0" name="role" v-model.lazy="userInfo.roleFlag">
+                    </div>
+                    <div class="name">
+                        <label>学号/工号</label><input type="text" class="text" placeholder="学号/工号" @blur="checkId()"
+                                                   v-model="userInfo.id">
+                        <span style="color: red" v-text="warning.id"></span>
+                    </div>
+
+                    <div class="name">
+                        <label>用户名</label><input type="text" class="text" placeholder="用户名" @blur="checkUserName()"
+                                                 v-model="userInfo.username">
+                        <span style="color: red" v-text="warning.username"></span>
+                    </div>
+                    <div class="pwd">
+                        <label>密　码</label><input type="password" class="text" placeholder="密码"
+                                                 v-model="userInfo.password" @blur="checkPassword()">
+                        <span style="color: red" v-text="warning.password"></span>
+                        <div class="check"></div>
+                    </div>
+                    <div class="pwd">
+                        <label>确认密码</label><input type="password" class="text" placeholder="密码"
+                                                  v-model="userInfo.password2" @blur="checkPassword()">
+                        <span style="color: red" v-text="warning.password2"></span>
+                        <div class="check"></div>
+                    </div>
+                    <div class="name">
+                        <label>班级</label><input type="text" class="text" placeholder="班级名称"
+                                                v-model="userInfo.className" @blur="checkClassName()">
+                        <span style="color: red" v-text="warning.className"></span>
+                    </div>
+                    <div class="name">
+                        <label>性别</label>男<input type="radio" value="1" name="gender" v-model="userInfo.gender">
+                        女<input type="radio" value="0" name="gender" v-model="userInfo.gender">
+                    </div>
+                    <div class="name">
+                        <label>电话号</label><input type="text" class="text" placeholder="电话号" @blur="checkPhone()"
+                                                 v-model="userInfo.phone">
+                        <span style="color: red" v-text="warning.phone"></span>
+                    </div>
+                    <div class="name">
+                        <label>身份证号</label><input type="text" class="text" placeholder="身份证号" @blur="checkCardId()"
+                                                  v-model="userInfo.cardId">
+                        <span style="color: red" v-text="warning.cardId"></span>
+                    </div>
+                    <input type="button" class="submit" @click="submitRegister()" tabindex="3" value="注册">
+                    <div class="tip"></div>
+                </div>
+            </div>
+        </div>
+        <div class="air-balloon ab-1 png"></div>
+        <div class="air-balloon ab-2 png"></div>
+        <div class="footer"></div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/fun.base.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/script.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/axios.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/vue.min.js}"></script>
+
+
+<script type="text/javascript">
+
+    Vue.config.devtools = true;
+    var vm = new Vue({
+        el: '#register',
+        data: {
+            checkUser: "",
+            userInfo: {
+                id: "",
+                username: "",
+                password: "",
+                password2: "",
+                gender: 1,
+                phone: "",
+                cardId: "",
+                roleFlag: 1,
+                className: ""
+            },
+            warning: {
+                id: "",
+                username: "",
+                password: "",
+                password2: "",
+                gender: "",
+                phone: "",
+                cardId: "",
+                className: ""
+            },
+            classList: [],
+            nameFlag: "",
+        },
+        methods: {
+
+            loadData(){
+
+
+            },
+            checkId() {
+                axios.get("/user/userId/" + this.userInfo.id + "/" + this.userInfo.roleFlag + "")
+                    .then(resp => {
+                        this.checkUser = true;
+                    })
+                    .catch(error => {
+                        this.checkUser = false;
+                    });
+                if (this.userInfo.id === null || this.userInfo.id.length === 0) {
+                    this.warning.id = "学号/工号不能为空";
+                    return false;
+                }
+                if (!/-?[1-9]\d*/.test(this.userInfo.id)) {
+                    //如果id不是正整数
+                    this.warning.id = "学号/工号格式错误";
+                    return false;
+                } else {
+                    this.warning.id = "";
+                    return true;
+                }
+            },
+            checkUserName() {
+                if (this.userInfo.username === null || this.userInfo.username.length === 0) {
+                    this.warning.username = "用户名不能为空";
+                    return false;
+                }
+                if (!/[A-Za-z0-9_\-\u4e00-\u9fa5]+/.test(this.userInfo.username)) {
+                    //如果用户名不是中文
+                    this.warning.username = "用户名格式错误";
+                    return false;
+                } else {
+                    this.warning.username = "";
+                    return true;
+                }
+            },
+            checkPassword() {
+                if (this.userInfo.password === null || this.userInfo.password.length === 0
+                    || this.userInfo.password2 === null || this.userInfo.password2.length === 0
+                ) {
+                    this.warning.password = "密码不能为空";
+                    this.warning.password2 = "确认密码不能为空";
+                    return false;
+                }
+                if (this.userInfo.password !== this.userInfo.password2) {
+                    //两次密码验证
+                    this.warning.password = "两次输入的密码不一致";
+                    this.warning.password2 = "两次输入的密码不一致";
+                    return false;
+                } else {
+                    this.warning.password = "";
+                    this.warning.password2 = "";
+                    return true;
+                }
+            },
+            checkPhone() {
+                if (this.userInfo.phone === null || this.userInfo.phone.length === 0) {
+                    this.warning.phone = "手机号不能为空";
+                    return false;
+                }
+                if (!/0?(13|14|15|18|17)[0-9]{9}/.test(this.userInfo.phone)) {
+                    //如果手机号不正确
+                    this.warning.phone = "手机号格式错误";
+                    return false;
+                } else {
+                    this.warning.phone = "";
+                    return true;
+                }
+            },
+            checkClassName() {
+                axios.get("/classes/one/" + this.userInfo.className + "")
+                    .then(resp => {
+                        this.nameFlag = true;
+                    })
+                    .catch(error => {
+                        this.nameFlag = false;
+                    });
+                if (this.userInfo.className === null || this.userInfo.className.length === 0) {
+                    this.warning.className = "班级名称不能为空";
+                    return false;
+                }
+                this.warning.className = "";
+                return true;
+            },
+            checkCardId() {
+                if (this.userInfo.cardId === null || this.userInfo.cardId.length === 0) {
+                    this.warning.cardId = "身份证号不能为空";
+                    return false;
+                }
+                if (!/\d{17}[\d|x]|\d{15}/.test(this.userInfo.cardId)) {
+                    //身份证号验证
+                    this.warning.cardId = "身份证号格式错误";
+                    return false;
+                } else {
+                    this.warning.cardId = "";
+                    return true;
+                }
+            },
+            submitRegister() {
+                let b = this.checkId();
+                let b1 = this.checkUserName();
+                let b2 = this.checkPassword();
+                let b3 = this.checkClassName();
+                let b4 = this.checkPhone();
+                let b5 = this.checkCardId();
+
+                if (this.checkUser===true) {
+                    this.warning.id = "学号/工号已存在";
+                    return false;
+                } else {
+                    this.warning.id = "";
+                }
+                if (this.userInfo.roleFlag === 1) {
+                    //学生
+                    if (!this.nameFlag===true) {
+                        this.warning.className = "班级不存在";
+                        return false;
+                    }
+                    this.warning.className = "";
+                } else {
+                    //教师身份
+                    if (this.nameFlag) {
+                        this.warning.className = "班级已存在";
+                        return false;
+                    }
+                    this.warning.className = "";
+                }
+                if (b && b1 && b3 && b2 && b4 && b5) {
+                    axios.post("/user/addUser", this.userInfo).then(resp => {
+                        alert("跳转到登录页面");
+                        location.href = "/login";
+                    }).catch(error => alert("注册失败，请检查信息填写是否正确"))
+                }
+            },
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
